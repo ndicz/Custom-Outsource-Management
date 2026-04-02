@@ -46,6 +46,7 @@
                             <field name="name" readonly="1"/>
                             <field name="employee_id"/>
                             <field name="payroll_period_id"/>
+                            <field name="attendance_source"/>
                         </group>
                         <group>
                             <field name="date_from"/>
@@ -62,6 +63,9 @@
                             <field name="allowance" widget="monetary" readonly="1"/>
                             <field name="overtime_hours"/>
                             <field name="overtime_amount" widget="monetary" readonly="1"/>
+                            <field name="holiday_work_days"/>
+                            <field name="holiday_work_rate" widget="monetary"/>
+                            <field name="holiday_work_amount" widget="monetary" readonly="1"/>
                         </group>
                         <group string="Perhitungan">
                             <field name="gross_salary" widget="monetary" readonly="1" style="background-color: #f0f0f0;"/>
@@ -84,12 +88,17 @@
                         <group string="Potongan &amp; Pajak">
                             <field name="manual_deduction" widget="monetary"/>
                             <field name="deduction" widget="monetary" readonly="1"/>
+                            <field name="absent_days"/>
+                            <field name="public_holiday_days"/>
+                            <field name="absence_deduction_rate" widget="monetary"/>
+                            <field name="attendance_deduction" widget="monetary" readonly="1"/>
                             <field name="pph21_amount" widget="monetary" readonly="1"/>
                             <field name="bpjs_employee_amount" widget="monetary" readonly="1"/>
                             <field name="loan_deduction" widget="monetary" readonly="1"/>
                         </group>
                         <group string="Catatan Potongan">
                             <field name="deduction_notes" nolabel="1" placeholder="Izin 2 hari, Denda keterlambatan, dll..."/>
+                            <field name="attendance_notes" nolabel="1" placeholder="Catatan absensi/import..."/>
                         </group>
                     </group>
 

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_attendance_import_wizard_form" model="ir.ui.view">
+        <field name="name">attendance.import.wizard.form</field>
+        <field name="model">attendance.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Absensi Payroll">
+                <group>
+                    <field name="payroll_period_id"/>
+                    <field name="file_type"/>
+                    <field name="csv_delimiter" invisible="file_type != 'csv'"/>
+                    <field name="file_name"/>
+                    <field name="file_data" filename="file_name"/>
+                </group>
+                <group string="Default Nominal (Opsional)">
+                    <field name="default_absence_deduction_rate"/>
+                    <field name="default_holiday_work_rate"/>
+                </group>
+                <group string="Format Kolom Wajib di File">
+                    <label string="Identitas: employee_id ATAU barcode ATAU work_email ATAU employee_name"/>
+                    <label string="Nilai: days_worked, absent_days, public_holiday_days, holiday_work_days, overtime_hours"/>
+                    <label string="Opsional: absence_deduction_rate, holiday_work_rate"/>
+                </group>
+                <group string="Hasil Import" invisible="not result_message">
+                    <field name="result_message" readonly="1" nolabel="1"/>
+                </group>
+                <footer>
+                    <button name="action_import_attendance" type="object" string="Import" class="btn-primary"/>
+                    <button string="Batal" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_attendance_import_wizard" model="ir.actions.act_window">
+        <field name="name">Import Absensi</field>
+        <field name="res_model">attendance.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_attendance_import_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

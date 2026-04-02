@@ -125,6 +125,8 @@
                         invisible="state != 'locked'" class="btn-success"/>
                     <button name="action_auto_generate_payslips" type="object" string="Auto-Generate Slips" 
                         invisible="state != 'open'" class="btn-info"/>
+                    <button name="action_open_attendance_import_wizard" type="object" string="Import Absensi" 
+                        invisible="state not in ('draft', 'open', 'locked')" class="btn-secondary"/>
                     <field name="state" widget="statusbar" nolabel="1"/>
                 </header>
                 <sheet>

@@ -74,6 +74,38 @@ class OutsourcePayslip(models.Model):
         compute='_compute_amount', store=True)
 
     days_worked = fields.Integer(string='Hari Kerja', default=20)
+    absent_days = fields.Integer(string='Hari Tidak Masuk', default=0)
+    public_holiday_days = fields.Integer(string='Tanggal Merah/Cuti Bersama', default=0)
+    holiday_work_days = fields.Float(string='Masuk di Hari Libur', default=0.0)
+    absence_deduction_rate = fields.Monetary(
+        string='Potongan Alfa per Hari',
+        currency_field='company_currency_id',
+        default=0.0,
+        help='Nominal potongan untuk setiap hari tidak masuk/alfa.'
+    )
+    holiday_work_rate = fields.Monetary(
+        string='Insentif Masuk Hari Libur per Hari',
+        currency_field='company_currency_id',
+        default=0.0,
+        help='Nominal tambahan per hari jika karyawan masuk saat tanggal merah/cuti bersama.'
+    )
+    attendance_deduction = fields.Monetary(
+        string='Potongan Absensi',
+        currency_field='company_currency_id',
+        compute='_compute_attendance_amounts',
+        store=True
+    )
+    holiday_work_amount = fields.Monetary(
+        string='Insentif Masuk Hari Libur',
+        currency_field='company_currency_id',
+        compute='_compute_attendance_amounts',
+        store=True
+    )
+    attendance_source = fields.Selection([
+        ('manual', 'Manual'),
+        ('import', 'Import CSV/XLSX'),
+    ], string='Sumber Absensi', default='manual')
+    attendance_notes = fields.Text(string='Catatan Absensi')
     
     # Workflow & Approval
     state = fields.Selection([
@@ -130,6 +162,10 @@ class OutsourcePayslip(models.Model):
                 rec.manual_allowance = rec.employee_id.manual_allowance
             if 'manual_deduction' not in vals:
                 rec.manual_deduction = rec.employee_id.manual_deduction
+            if 'absence_deduction_rate' not in vals:
+                rec.absence_deduction_rate = rec.basic_salary / 20 if rec.basic_salary else 0.0
+            if 'holiday_work_rate' not in vals:
+                rec.holiday_work_rate = rec.basic_salary / 20 if rec.basic_salary else 0.0
 
             if not rec.allowance_line_ids and rec.employee_id.allowance_line_ids:
                 rec.allowance_line_ids = [
@@ -155,6 +191,12 @@ class OutsourcePayslip(models.Model):
 
         return rec
 
+    @api.depends('absent_days', 'absence_deduction_rate', 'holiday_work_days', 'holiday_work_rate')
+    def _compute_attendance_amounts(self):
+        for rec in self:
+            rec.attendance_deduction = max(rec.absent_days, 0) * max(rec.absence_deduction_rate, 0.0)
+            rec.holiday_work_amount = max(rec.holiday_work_days, 0.0) * max(rec.holiday_work_rate, 0.0)
+
     @api.depends('basic_salary', 'allowance', 'overtime_hours', 'employee_id')
     def _compute_overtime(self):
         for rec in self:
@@ -165,12 +207,21 @@ class OutsourcePayslip(models.Model):
             else:
                 rec.overtime_amount = 0.0
 
-    @api.depends('basic_salary', 'allowance', 'deduction', 'days_worked', 
-                 'overtime_amount', 'employee_id', 'pph21_amount', 'bpjs_employee_amount')
+    @api.depends(
+        'basic_salary',
+        'allowance',
+        'deduction',
+        'overtime_amount',
+        'holiday_work_amount',
+        'attendance_deduction',
+        'employee_id',
+        'pph21_amount',
+        'bpjs_employee_amount'
+    )
     def _compute_amount(self):
         for rec in self:
             # Gross salary
-            rec.gross_salary = rec.basic_salary + rec.allowance + rec.overtime_amount
+            rec.gross_salary = rec.basic_salary + rec.allowance + rec.overtime_amount + rec.holiday_work_amount
             
             # PPh 21 based on PTKP status
             if rec.employee_id:
@@ -195,14 +246,14 @@ class OutsourcePayslip(models.Model):
                 rec.bpjs_employer_amount = 0.0
             
             # Net salary
-            total_deductions = (rec.deduction + rec.pph21_amount + 
-                              rec.bpjs_employee_amount + rec.loan_deduction)
+            total_deductions = (
+                rec.deduction
+                + rec.attendance_deduction
+                + rec.pph21_amount
+                + rec.bpjs_employee_amount
+                + rec.loan_deduction
+            )
             rec.net_salary = rec.gross_salary - total_deductions
-            
-            # Adjust for days worked
-            if rec.days_worked and rec.days_worked != 20:
-                daily_rate = rec.net_salary / 20
-                rec.net_salary = daily_rate * rec.days_worked
 
     @api.depends('employee_id')
     def _compute_loan_deduction(self):

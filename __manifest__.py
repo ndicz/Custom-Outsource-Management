@@ -65,6 +65,7 @@
         'wizard/efaktur_export_wizard_views.xml',
         'wizard/bpjs_report_wizard_views.xml',
         'wizard/payslip_bank_export_wizard_views.xml',
+        'wizard/attendance_import_wizard_views.xml',
         'wizard/generate_financial_report_wizard_views.xml',
         'wizard/generate_client_profitability_wizard_views.xml',
 

@@ -105,6 +105,19 @@ class HrPayrollPeriod(models.Model):
         self.message_post(body=f'Auto-generated {created_slips} payslips')
         return created_slips
 
+    def action_open_attendance_import_wizard(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Import Absensi',
+            'res_model': 'attendance.import.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_payroll_period_id': self.id,
+            },
+        }
+
     _sql_constraints = [
         ('date_range_check', 'CHECK(date_start <= date_end)', 
          'Tanggal mulai harus sebelum tanggal berakhir!'),
