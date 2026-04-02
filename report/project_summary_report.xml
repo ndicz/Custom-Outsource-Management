@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <report
+        id="action_report_project_summary"
+        model="project.project"
+        string="Ringkasan project outsource"
+        report_type="qweb-pdf"
+        name="outsource_custom.report_project_summary"
+        file="outsource_custom.report_project_summary"
+        print_report_name="'Project Summary - %s' % object.name"
+    />
+
+    <template id="report_project_summary">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="project">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h4>Ringkasan project outsource</h4>
+                        <h5 t-field="project.name"/>
+
+                        <table class="table table-sm table-bordered mb-4">
+                            <tr>
+                                <td><strong>Klien</strong></td>
+                                <td t-field="project.partner_id"/>
+                                <td><strong>No. kontrak</strong></td>
+                                <td t-esc="project.contract_number or '-'"/>
+                            </tr>
+                            <tr>
+                                <td><strong>Tipe billing</strong></td>
+                                <td t-esc="project.billing_type or '-'"/>
+                                <td><strong>Status SLA</strong></td>
+                                <td t-esc="dict(project.fields_get(['sla_status'])['sla_status']['selection']).get(project.sla_status, '-')"/>
+                            </tr>
+                            <tr>
+                                <td><strong>SLA mulai</strong></td>
+                                <td t-field="project.sla_start_date"/>
+                                <td><strong>SLA berakhir</strong></td>
+                                <td t-field="project.sla_end_date"/>
+                            </tr>
+                            <tr>
+                                <td><strong>Jumlah karyawan</strong></td>
+                                <td t-esc="project.placed_count"/>
+                                <td><strong>No. PO klien</strong></td>
+                                <td t-esc="project.po_number_client or '-'"/>
+                            </tr>
+                        </table>
+
+                        <h6>Karyawan ditempatkan</h6>
+                        <table class="table table-sm table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Status PTKP</th>
+                                    <th>Mulai penempatan</th>
+                                    <th>Berakhir</th>
+                                    <th>No. BPJS Kes.</th>
+                                    <th>No. BPJS TK</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="project.placed_employee_ids" t-as="emp">
+                                    <tr>
+                                        <td t-esc="emp.name"/>
+                                        <td t-esc="emp.ptkp_status"/>
+                                        <td t-esc="emp.placement_start_date or '-'"/>
+                                        <td t-esc="emp.placement_end_date or '-'"/>
+                                        <td t-esc="emp.bpjs_kesehatan_number or '-'"/>
+                                        <td t-esc="emp.bpjs_tk_number or '-'"/>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sequences for Audit Models -->
+    <record id="seq_account_reconciliation" model="ir.sequence">
+        <field name="name">Account Reconciliation Reference</field>
+        <field name="code">account.reconciliation</field>
+        <field name="prefix">REC-%(year)s/%(month)02d-</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="padding">4</field>
+        <field name="implementation">standard</field>
+    </record>
+
+    <record id="seq_tax_payment_tracking" model="ir.sequence">
+        <field name="name">Tax Payment Tracking Reference</field>
+        <field name="code">tax.payment.tracking</field>
+        <field name="prefix">TAX-%(year)s/%(month)02d-</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="padding">4</field>
+        <field name="implementation">standard</field>
+    </record>
+</odoo>

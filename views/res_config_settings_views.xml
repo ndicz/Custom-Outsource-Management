@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_outsource_config_settings" model="ir.ui.view">
+        <field name="name">outsource.config.settings</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='account']" position="inside">
+                <h2>Outsource Custom Configuration</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Konfigurasi Payroll</h3>
+                        <div class="mb-3">
+                            <label for="salary_expense_account_id">Akun Beban Gaji</label>
+                            <field name="salary_expense_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="salary_payable_account_id">Akun Hutang Gaji</label>
+                            <field name="salary_payable_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tax_payable_account_id">Akun Hutang Pajak</label>
+                            <field name="tax_payable_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bpjs_payable_account_id">Akun Hutang BPJS</label>
+                            <field name="bpjs_payable_account_id" class="o_field_many2one"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Konfigurasi E-Faktur</h3>
+                        <div class="mb-3">
+                            <label for="coretax_api_url">Coretax API URL</label>
+                            <field name="coretax_api_url"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="coretax_api_key">Coretax API Key</label>
+                            <field name="coretax_api_key" password="True"/>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>Konfigurasi Pengeluaran Operasional</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Rekening Biaya</h3>
+                        <div class="mb-3">
+                            <label for="expense_rent_account_id">Biaya Sewa</label>
+                            <field name="expense_rent_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expense_utilities_account_id">Biaya Utilitas</label>
+                            <field name="expense_utilities_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expense_transport_account_id">Biaya Transportasi</label>
+                            <field name="expense_transport_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expense_communication_account_id">Biaya Komunikasi</label>
+                            <field name="expense_communication_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expense_maintenance_account_id">Biaya Perawatan</label>
+                            <field name="expense_maintenance_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expense_equipment_account_id">Biaya Peralatan</label>
+                            <field name="expense_equipment_account_id" class="o_field_many2one"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="expense_supplies_account_id">Biaya Perlengkapan</label>
+                            <field name="expense_supplies_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expense_meals_account_id">Biaya Makan/Minuman</label>
+                            <field name="expense_meals_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expense_travel_account_id">Biaya Perjalanan</label>
+                            <field name="expense_travel_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expense_professional_account_id">Biaya Profesional</label>
+                            <field name="expense_professional_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expense_insurance_account_id">Biaya Asuransi</label>
+                            <field name="expense_insurance_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expense_other_account_id">Biaya Lainnya</label>
+                            <field name="expense_other_account_id" class="o_field_many2one"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Pengaturan Pembayaran &amp; Jurnal</h3>
+                        <div class="mb-3">
+                            <label for="expense_payment_account_id">Akun Bank/Kas</label>
+                            <field name="expense_payment_account_id" class="o_field_many2one"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expense_journal_id">Jurnal Pengeluaran</label>
+                            <field name="expense_journal_id" class="o_field_many2one"/>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Pengaturan Laporan Keuangan</h3>
+                        <div class="mb-3">
+                            <label for="corporate_tax_rate">Tarif Pajak Korporat (%)</label>
+                            <field name="corporate_tax_rate"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="overhead_allocation_rate">Alokasi Overhead (% dari COGS)</label>
+                            <field name="overhead_allocation_rate"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

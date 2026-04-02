@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Default Salary Components -->
+    <record id="component_basic_salary" model="hr.salary.component">
+        <field name="code">BASIC</field>
+        <field name="name">Gaji Pokok</field>
+        <field name="category">earning</field>
+        <field name="amount_type">fixed</field>
+        <field name="compute_method">manual</field>
+        <field name="sequence">10</field>
+        <field name="is_default">True</field>
+    </record>
+
+    <record id="component_allowance" model="hr.salary.component">
+        <field name="code">ALLOW</field>
+        <field name="name">Tunjangan</field>
+        <field name="category">earning</field>
+        <field name="amount_type">fixed</field>
+        <field name="compute_method">manual</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="component_overtime" model="hr.salary.component">
+        <field name="code">OT</field>
+        <field name="name">Bayar Overtime</field>
+        <field name="category">earning</field>
+        <field name="amount_type">formula</field>
+        <field name="compute_method">auto</field>
+        <field name="sequence">30</field>
+    </record>
+
+    <record id="component_pph21" model="hr.salary.component">
+        <field name="code">PPH21</field>
+        <field name="name">PPh Pasal 21</field>
+        <field name="category">tax</field>
+        <field name="amount_type">percentage</field>
+        <field name="percentage_base">gross</field>
+        <field name="compute_method">auto</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="component_bpjs_employee" model="hr.salary.component">
+        <field name="code">BPJS_EMP</field>
+        <field name="name">BPJS Karyawan</field>
+        <field name="category">deduction</field>
+        <field name="amount_type">percentage</field>
+        <field name="percentage_base">gross</field>
+        <field name="compute_method">auto</field>
+        <field name="sequence">60</field>
+    </record>
+
+    <record id="component_bpjs_employer" model="hr.salary.component">
+        <field name="code">BPJS_EMP_R</field>
+        <field name="name">BPJS Perusahaan</field>
+        <field name="category">deduction</field>
+        <field name="amount_type">percentage</field>
+        <field name="percentage_base">gross</field>
+        <field name="compute_method">auto</field>
+        <field name="sequence">70</field>
+    </record>
+
+    <record id="component_loan_deduction" model="hr.salary.component">
+        <field name="code">LOAN</field>
+        <field name="name">Cicilan Pinjaman</field>
+        <field name="category">deduction</field>
+        <field name="amount_type">fixed</field>
+        <field name="compute_method">auto</field>
+        <field name="sequence">80</field>
+    </record>
+
+    <record id="component_other_deduction" model="hr.salary.component">
+        <field name="code">DEDUCTION</field>
+        <field name="name">Potongan Lain</field>
+        <field name="category">deduction</field>
+        <field name="amount_type">fixed</field>
+        <field name="compute_method">manual</field>
+        <field name="sequence">90</field>
+    </record>
+
+    <!-- Default Salary Structure for Staff -->
+    <record id="salary_structure_staff" model="hr.salary.structure">
+        <field name="name">Struktur Gaji Staff</field>
+        <field name="category">staff</field>
+        <field name="is_default">True</field>
+        <field name="salary_component_ids" eval="[
+            (6, 0, [
+                ref('component_basic_salary'),
+                ref('component_allowance'),
+                ref('component_overtime'),
+                ref('component_pph21'),
+                ref('component_bpjs_employee'),
+                ref('component_bpjs_employer'),
+                ref('component_loan_deduction'),
+                ref('component_other_deduction'),
+            ])
+        ]"/>
+        <field name="notes">Struktur gaji default untuk Staff</field>
+    </record>
+</odoo>

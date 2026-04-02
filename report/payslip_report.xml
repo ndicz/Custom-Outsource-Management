@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <report
+        id="action_report_outsource_payslip"
+        model="outsource.payslip"
+        string="Slip Gaji Outsource"
+        report_type="qweb-pdf"
+        name="outsource_custom.report_outsource_payslip"
+        file="outsource_custom.report_outsource_payslip"
+        print_report_name="'Slip Gaji - %s' % (object.name or '')"
+    />
+
+    <template id="report_outsource_payslip">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Slip Gaji</h2>
+                        <table class="table table-sm table-borderless mb-3">
+                            <tr>
+                                <td><strong>No. Slip:</strong> <t t-esc="doc.name"/></td>
+                                <td class="text-end"><strong>Hari Kerja:</strong> <t t-esc="doc.days_worked"/> hari</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Karyawan:</strong> <t t-esc="doc.employee_id.name"/></td>
+                                <td class="text-end"><strong>Periode:</strong> <t t-esc="doc.date_from"/> - <t t-esc="doc.date_to"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Status:</strong> <t t-esc="doc.state"/></td>
+                                <td></td>
+                            </tr>
+                        </table>
+
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Keterangan</th>
+                                    <th class="text-end">Jumlah</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Penghasilan:</strong></td>
+                                    <td></td>
+                                </tr>
+                                <tr style="padding-left: 20px;">
+                                    <td>Gaji Pokok</td>
+                                    <td class="text-end"><t t-esc="'{:,.0f}'.format(doc.basic_salary)"/></td>
+                                </tr>
+                                <tr>
+                                    <td>Tunjangan</td>
+                                    <td class="text-end"><t t-esc="'{:,.0f}'.format(doc.allowance)"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Gaji Kotor</strong></td>
+                                    <td class="text-end"><t t-esc="'{:,.0f}'.format(doc.gross_salary)"/></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">&#160;</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Potongan &amp; Pajak:</strong></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Potongan Lain-lain</td>
+                                    <td class="text-end"><t t-esc="'{:,.0f}'.format(doc.deduction)"/></td>
+                                </tr>
+                                <tr>
+                                    <td>PPh Pasal 21</td>
+                                    <td class="text-end"><t t-esc="'{:,.0f}'.format(doc.pph21_amount)"/></td>
+                                </tr>
+                                <tr>
+                                    <td>BPJS Kesehatan &amp; TK</td>
+                                    <td class="text-end"><t t-esc="'{:,.0f}'.format(doc.bpjs_amount)"/></td>
+                                </tr>
+                                <t t-if="doc.deduction_notes">
+                                    <tr>
+                                        <td colspan="2"><small><em>Catatan: <t t-esc="doc.deduction_notes"/></em></small></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                            <tfoot>
+                                <tr class="fw-bold" style="background-color: #f0f0f0;">
+                                    <td>GAJI BERSIH</td>
+                                    <td class="text-end" style="font-size: 16px; color: #28a745;"><t t-esc="'{:,.0f}'.format(doc.net_salary)"/></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <p class="small text-muted">
+                            Slip gaji ini di-generate otomatis oleh modul Outsource Custom. Untuk pertanyaan lebih lanjut, hubungi HR Dept.
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_payslip_bank_export_wizard" model="ir.ui.view">
+        <field name="name">payslip.bank.export.wizard</field>
+        <field name="model">payslip.bank.export.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Export Payroll untuk Bank">
+                <group>
+                    <field name="payroll_period_id"/>
+                    <field name="export_format"/>
+                    <field name="include_approved_only"/>
+                </group>
+                <footer>
+                    <button name="action_export" type="object" string="Download File" class="btn-primary"/>
+                    <button string="Batal" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_payslip_bank_export_wizard" model="ir.actions.act_window">
+        <field name="name">Export Payroll untuk Bank</field>
+        <field name="res_model">payslip.bank.export.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_payslip_bank_export_wizard"/>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

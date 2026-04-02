@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Operational Expense Views -->
+    <record id="view_operational_expense_list" model="ir.ui.view">
+        <field name="name">operational.expense.list</field>
+        <field name="model">operational.expense</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'posted'" decoration-warning="state in ('submitted', 'verified')">
+                <field name="reference"/>
+                <field name="expense_date"/>
+                <field name="expense_type"/>
+                <field name="amount" widget="monetary" sum="Total"/>
+                <field name="project_id"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_operational_expense_form" model="ir.ui.view">
+        <field name="name">operational.expense.form</field>
+        <field name="model">operational.expense</field>
+        <field name="arch" type="xml">
+            <form string="Pengeluaran Operasional">
+                <header>
+                    <button name="action_submit" type="object" string="Submit" invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_verify" type="object" string="Verify" invisible="state != 'submitted'" class="btn-info"/>
+                    <button name="action_approve" type="object" string="Approve &amp; Post" invisible="state != 'verified'" class="btn-success"/>
+                    <button name="action_post" type="object" string="Post" invisible="state != 'approved'" class="btn-warning"/>
+                    <field name="state" widget="statusbar" nolabel="1"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="reference" readonly="1"/>
+                            <field name="expense_date"/>
+                        </group>
+                        <group>
+                            <field name="expense_type"/>
+                            <field name="amount" widget="monetary"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="project_id"/>
+                            <field name="employee_id"/>
+                        </group>
+                        <group>
+                            <field name="vendor_id"/>
+                            <field name="move_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Detail">
+                        <field name="name" nolabel="1"/>
+                    </group>
+                    <group string="Catatan">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                    <group string="Bukti/Receipt">
+                        <field name="attachment_ids" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_operational_expense" model="ir.actions.act_window">
+        <field name="name">Pengeluaran Operasional</field>
+        <field name="res_model">operational.expense</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Financial Report Views -->
+    <record id="view_financial_report_list" model="ir.ui.view">
+        <field name="name">financial.report.list</field>
+        <field name="model">financial.report</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="report_type"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="net_income" widget="monetary"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_financial_report_form" model="ir.ui.view">
+        <field name="name">financial.report.form</field>
+        <field name="model">financial.report</field>
+        <field name="arch" type="xml">
+            <form string="Laporan Keuangan" readonly="1" create="false">
+                <sheet>
+                    <group>
+                        <field name="report_type"/>
+                        <field name="period_start"/>
+                        <field name="period_end"/>
+                    </group>
+                    <div>
+                        <field name="report_html" nolabel="1"/>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_financial_report" model="ir.actions.act_window">
+        <field name="name">Laporan Keuangan</field>
+        <field name="res_model">financial.report</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Client Profitability Views -->
+    <record id="view_client_profitability_list" model="ir.ui.view">
+        <field name="name">client.profitability.list</field>
+        <field name="model">client.profitability</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="revenue_total" widget="monetary"/>
+                <field name="gross_profit" widget="monetary"/>
+                <field name="gross_margin_pct"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_client_profitability_form" model="ir.ui.view">
+        <field name="name">client.profitability.form</field>
+        <field name="model">client.profitability</field>
+        <field name="arch" type="xml">
+            <form string="Analisis Profitabilitas Client" readonly="1" create="true">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="project_id"/>
+                        </group>
+                        <group>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                        </group>
+                    </group>
+                    <div>
+                        <field name="analysis_html" nolabel="1"/>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_client_profitability" model="ir.actions.act_window">
+        <field name="name">Analisis Profitabilitas Client</field>
+        <field name="res_model">client.profitability</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu items -->
+    <menuitem id="menu_operational_expense"
+              name="Pengeluaran Operasional"
+              parent="account.menu_finance"
+              action="action_operational_expense"
+              sequence="35"/>
+
+    <menuitem id="menu_financial_reports"
+              name="Laporan Keuangan"
+              parent="account.menu_finance"
+              sequence="50"/>
+    <menuitem id="menu_financial_report_pl"
+              name="Profit &amp; Loss"
+              parent="menu_financial_reports"
+              action="action_financial_report"
+              sequence="10"/>
+    <menuitem id="menu_client_profitability"
+              name="Profitabilitas per Client"
+              parent="menu_financial_reports"
+              action="action_client_profitability"
+              sequence="20"/>
+</odoo>

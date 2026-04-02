@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_order_form_outsource" model="ir.ui.view">
+        <field name="name">sale.order.form.outsource</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="outsource_details" string="Outsource">
+                    <group string="Kontrak">
+                        <field name="contract_number" readonly="1"
+                               invisible="state == 'draft'"/>
+                        <field name="contract_type"/>
+                        <field name="po_number_client"/>
+                    </group>
+                    <group string="PPh 23">
+                        <field name="pph23_applicable" widget="boolean_toggle"/>
+                        <field name="pph23_rate"    invisible="not pph23_applicable"/>
+                        <field name="pph23_amount"  invisible="not pph23_applicable"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

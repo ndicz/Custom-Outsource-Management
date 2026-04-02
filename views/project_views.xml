@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_project_form_outsource" model="ir.ui.view">
+        <field name="name">project.project.form.outsource</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="outsource_sla" string="Outsource">
+                    <group string="SLA">
+                        <field name="sla_start_date"/>
+                        <field name="sla_end_date"/>
+                        <field name="sla_status"/>
+                    </group>
+                    <group string="Karyawan ditempatkan">
+                        <field name="placed_employee_ids">
+                            <list>
+                                <field name="name"/>
+                                <field name="outsource_client_id"/>
+                                <field name="bpjs_kesehatan_number"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

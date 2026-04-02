@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_outsource_payslip" model="ir.sequence">
+        <field name="name">Outsource Payslip</field>
+        <field name="code">outsource.payslip</field>
+        <field name="padding">6</field>
+        <field name="prefix">PAYS-%(year)s-</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

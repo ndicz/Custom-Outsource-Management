@@ -1,0 +1,556 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ================================================================ -->
+        <!-- TIER 1: SALARY PAYMENT AUTOMATION -->
+        <!-- ================================================================ -->
+
+        <!-- hr.payroll.payment.run Tree View -->
+        <record id="hr_payroll_payment_run_tree" model="ir.ui.view">
+            <field name="name">hr.payroll.payment.run.tree</field>
+            <field name="model">hr.payroll.payment.run</field>
+            <field name="arch" type="xml">
+                <list string="Salary Payment Runs" decoration-warning="state == 'draft'" decoration-success="state == 'reconciled'">
+                    <field name="name"/>
+                    <field name="period_id"/>
+                    <field name="payment_date"/>
+                    <field name="total_amount" sum="Total"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- hr.payroll.payment.run Form View -->
+        <record id="hr_payroll_payment_run_form" model="ir.ui.view">
+            <field name="name">hr.payroll.payment.run.form</field>
+            <field name="model">hr.payroll.payment.run</field>
+            <field name="arch" type="xml">
+                <form string="Salary Payment Run">
+                    <header>
+                        <button name="action_prepare_for_payment" type="object" string="Prepare for Payment" invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="action_generate_bank_file" type="object" string="Generate Bank File" invisible="state != 'ready'" class="btn-primary"/>
+                        <button name="action_upload_payment_proof" type="object" string="Mark as Paid" invisible="state != 'processing'" class="btn-primary"/>
+                        <button name="action_validate_reconciliation" type="object" string="Reconcile" invisible="state != 'completed'" class="btn-success"/>
+                        <button name="action_reset_to_draft" type="object" string="Reset to Draft" invisible="state not in ('ready', 'processing')"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,ready,processing,completed,reconciled"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        
+                        <group>
+                            <group>
+                                <field name="period_id" required="1"/>
+                                <field name="payment_date" required="1"/>
+                            </group>
+                            <group>
+                                <field name="total_amount" readonly="1"/>
+                                <field name="variance" widget="monetary" readonly="1"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Payment Details" name="payment_details">
+                                <group>
+                                    <group string="Payment Method">
+                                        <field name="payment_method"/>
+                                        <field name="bank_account_id"/>
+                                        <field name="bank_file_format"/>
+                                    </group>
+                                    <group string="Amounts">
+                                        <field name="total_amount" readonly="1"/>
+                                        <field name="payment_amount"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <page string="Payment Lines" name="payment_lines">
+                                <field name="payment_line_ids" readonly="1">
+                                    <list>
+                                        <field name="employee_id"/>
+                                        <field name="bank_account_number"/>
+                                        <field name="payment_amount"/>
+                                        <field name="reference"/>
+                                        <field name="reconciliation_status"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <page string="Bank File" name="bank_file">
+                                <group>
+                                    <field name="bank_file_name" readonly="1"/>
+                                    <field name="bank_file_generated_date" readonly="1"/>
+                                    <field name="bank_file" filename="bank_file_name"/>
+                                </group>
+                            </page>
+
+                            <page string="Payment Proof" name="payment_proof">
+                                <group>
+                                    <field name="payment_date_actual"/>
+                                    <field name="payment_reference"/>
+                                    <field name="payment_proof" filename="payment_proof_name"/>
+                                    <field name="reconciliation_status" readonly="1"/>
+                                    <field name="reconciliation_notes" nolabel="1" colspan="2"/>
+                                </group>
+                            </page>
+
+                            <page string="GL Entry" name="gl_entry">
+                                <field name="invoice_id" readonly="1"/>
+                                <button name="action_post_gl_entry" type="object" string="Post GL Entry" invisible="state != 'completed'" class="btn-primary"/>
+                            </page>
+
+                            <page string="Audit Trail" name="audit_trail">
+                                <group>
+                                    <field name="created_by" readonly="1"/>
+                                    <field name="approved_by" readonly="1"/>
+                                    <field name="approved_date" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+
+                        <div class="oe_chatter">
+                            <field name="message_ids" widget="mail_thread"/>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for hr.payroll.payment.run -->
+        <record id="action_hr_payroll_payment_run" model="ir.actions.act_window">
+            <field name="name">Salary Payment Runs</field>
+            <field name="res_model">hr.payroll.payment.run</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="hr_payroll_payment_run_tree"/>
+            <field name="context">{'search_default_draft': 1}</field>
+            <field name="help">Manage salary payment distribution to employees via bank transfer</field>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- TIER 2: VENDOR INVOICE & PAYMENT -->
+        <!-- ================================================================ -->
+
+        <!-- account.invoice.incoming Tree View -->
+        <record id="account_invoice_incoming_tree" model="ir.ui.view">
+            <field name="name">account.invoice.incoming.tree</field>
+            <field name="model">account.invoice.incoming</field>
+            <field name="arch" type="xml">
+                <list string="Vendor Invoices" decoration-warning="state == 'posted'" decoration-success="state == 'verified'">
+                    <field name="name"/>
+                    <field name="vendor_id"/>
+                    <field name="vendor_invoice_number"/>
+                    <field name="total_amount" sum="Total"/>
+                    <field name="balance_due" sum="Total Due"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- account.invoice.incoming Form View -->
+        <record id="account_invoice_incoming_form" model="ir.ui.view">
+            <field name="name">account.invoice.incoming.form</field>
+            <field name="model">account.invoice.incoming</field>
+            <field name="arch" type="xml">
+                <form string="Vendor Invoice">
+                    <header>
+                        <button name="action_verify_3way_match" type="object" string="Verify 3-way Match" invisible="state != 'posted'" class="btn-primary"/>
+                        <button name="action_approve_for_payment" type="object" string="Approve for Payment" invisible="state != 'verified'" class="btn-primary"/>
+                        <button name="action_post_gl_entry" type="object" string="Post GL Entry" invisible="state != 'verified'"/>
+                        <button name="action_mark_paid" type="object" string="Mark as Paid" invisible="state != 'scheduled'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,posted,verified,approved,scheduled,paid,reconciled"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="vendor_id" readonly="0"/>
+                            <field name="vendor_invoice_number" readonly="1"/>
+                        </h1>
+
+                        <group>
+                            <group>
+                                <field name="vendor_id" required="1"/>
+                                <field name="vendor_invoice_number" required="1"/>
+                                <field name="invoice_date" required="1"/>
+                            </group>
+                            <group>
+                                <field name="po_id"/>
+                                <field name="grn_id"/>
+                                <field name="due_date"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Amounts" name="amounts">
+                                <group>
+                                    <field name="subtotal_amount"/>
+                                    <field name="tax_amount"/>
+                                    <field name="total_amount" required="1"/>
+                                    <separator/>
+                                    <field name="paid_amount" readonly="1"/>
+                                    <field name="balance_due" readonly="1"/>
+                                </group>
+                            </page>
+
+                            <page string="3-way Match Verification" name="3way_match">
+                                <div class="alert alert-info" role="alert" invisible="all_matches_ok">
+                                    <p>Click "Verify 3-way Match" button to validate PO, GRN, and Invoice amounts</p>
+                                </div>
+                                
+                                <group>
+                                    <field name="po_amount" readonly="1"/>
+                                    <field name="grn_amount" readonly="1"/>
+                                    <field name="total_amount" readonly="1"/>
+                                </group>
+
+                                <separator/>
+                                <h4>Match Results:</h4>
+                                <group>
+                                    <field name="match_po_ok" readonly="1" string="âœ“ PO Amount Match"/>
+                                    <field name="match_grn_ok" readonly="1" string="âœ“ GRN Quantity Match"/>
+                                    <field name="match_invoice_ok" readonly="1" string="âœ“ Invoice Lines OK"/>
+                                    <field name="all_matches_ok" readonly="1" string="All 3-way Match"/>
+                                </group>
+
+                                <field name="match_notes" nolabel="1" colspan="2" readonly="1"/>
+                            </page>
+
+                            <page string="Invoice Lines" name="lines">
+                                <field name="line_ids" nolabel="1">
+                                    <list editable="bottom">
+                                        <field name="product_id"/>
+                                        <field name="description"/>
+                                        <field name="quantity"/>
+                                        <field name="unit"/>
+                                        <field name="unit_price"/>
+                                        <field name="line_amount" sum="Total"/>
+                                        <field name="account_id"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <page string="GL Entry" name="gl_entry">
+                                <field name="invoice_id" readonly="1"/>
+                            </page>
+
+                            <page string="Notes" name="notes">
+                                <field name="payment_notes" nolabel="1" colspan="2"/>
+                            </page>
+
+                            <page string="Audit Trail" name="audit_trail">
+                                <group>
+                                    <field name="created_by" readonly="1"/>
+                                    <field name="verified_by" readonly="1"/>
+                                    <field name="verified_date" readonly="1"/>
+                                    <field name="approved_by" readonly="1"/>
+                                    <field name="approved_date" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+
+                        <div class="oe_chatter">
+                            <field name="message_ids" widget="mail_thread"/>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for account.invoice.incoming -->
+        <record id="action_account_invoice_incoming" model="ir.actions.act_window">
+            <field name="name">Vendor Invoices</field>
+            <field name="res_model">account.invoice.incoming</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="account_invoice_incoming_tree"/>
+            <field name="help">Manage incoming vendor invoices with 3-way matching (PO | GRN | Invoice)</field>
+        </record>
+
+        <!-- account.payment.run Tree View -->
+        <record id="account_payment_run_tree" model="ir.ui.view">
+            <field name="name">account.payment.run.tree</field>
+            <field name="model">account.payment.run</field>
+            <field name="arch" type="xml">
+                <list string="Vendor Payment Runs" decoration-info="state == 'draft'" decoration-warning="state == 'ready'">
+                    <field name="name"/>
+                    <field name="payment_date"/>
+                    <field name="invoice_count"/>
+                    <field name="total_amount" sum="Total"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- account.payment.run Form View -->
+        <record id="account_payment_run_form" model="ir.ui.view">
+            <field name="name">account.payment.run.form</field>
+            <field name="model">account.payment.run</field>
+            <field name="arch" type="xml">
+                <form string="Vendor Payment Run">
+                    <header>
+                        <button name="action_generate_payment_file" type="object" string="Generate Bank File" invisible="state != 'draft'" class="btn-primary"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,ready,processing,completed"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+
+                        <group>
+                            <group>
+                                <field name="payment_date" required="1"/>
+                            </group>
+                            <group>
+                                <field name="total_amount" readonly="1"/>
+                                <field name="invoice_count" readonly="1"/>
+                            </group>
+                        </group>
+
+                        <field name="invoice_ids" nolabel="1">
+                            <list>
+                                <field name="vendor_id"/>
+                                <field name="vendor_invoice_number"/>
+                                <field name="total_amount"/>
+                                <field name="balance_due"/>
+                                <field name="state"/>
+                            </list>
+                        </field>
+
+                        <group invisible="state == 'draft'">
+                            <field name="bank_file" filename="bank_file_name"/>
+                            <field name="bank_file_name" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for account.payment.run -->
+        <record id="action_account_payment_run" model="ir.actions.act_window">
+            <field name="name">Vendor Payment Runs</field>
+            <field name="res_model">account.payment.run</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="account_payment_run_tree"/>
+            <field name="help">Batch vendor payments and generate bank files</field>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- TIER 3: DOCUMENT GENERATION -->
+        <!-- ================================================================ -->
+
+        <!-- sale.invoice.customer Tree View -->
+        <record id="sale_invoice_customer_tree" model="ir.ui.view">
+            <field name="name">sale.invoice.customer.tree</field>
+            <field name="model">sale.invoice.customer</field>
+            <field name="arch" type="xml">
+                <list string="Customer Invoices" decoration-warning="state == 'draft'" decoration-success="state == 'paid'">
+                    <field name="name"/>
+                    <field name="customer_id"/>
+                    <field name="invoice_date"/>
+                    <field name="total_amount" sum="Total"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- sale.invoice.customer Form View -->
+        <record id="sale_invoice_customer_form" model="ir.ui.view">
+            <field name="name">sale.invoice.customer.form</field>
+            <field name="model">sale.invoice.customer</field>
+            <field name="arch" type="xml">
+                <form string="Customer Invoice">
+                    <header>
+                        <button name="action_generate_invoice_pdf" type="object" string="Generate PDF" invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="action_send_to_customer" type="object" string="Send to Customer" invisible="state != 'draft'" class="btn-primary"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,sent,received,paid,overdue"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+
+                        <group>
+                            <group>
+                                <field name="customer_id" required="1"/>
+                                <field name="invoice_date"/>
+                                <field name="due_date"/>
+                            </group>
+                            <group>
+                                <field name="total_amount" required="1"/>
+                                <field name="state" readonly="1"/>
+                            </group>
+                        </group>
+
+                        <field name="description" nolabel="1" colspan="2" placeholder="Description of services..."/>
+
+                        <notebook>
+                            <page string="PDF" name="pdf">
+                                <group invisible="not pdf_content">
+                                    <field name="pdf_content" nolabel="1"/>
+                                    <field name="pdf_generated_date" readonly="1"/>
+                                </group>
+                            </page>
+
+                            <page string="Payment" name="payment">
+                                <group>
+                                    <field name="payment_date"/>
+                                    <field name="payment_method"/>
+                                    <field name="payment_proof"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for sale.invoice.customer -->
+        <record id="action_sale_invoice_customer" model="ir.actions.act_window">
+            <field name="name">Customer Invoices</field>
+            <field name="res_model">sale.invoice.customer</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="sale_invoice_customer_tree"/>
+            <field name="help">Create and manage customer invoices</field>
+        </record>
+
+        <!-- hr.work.order.spk Tree View -->
+        <record id="hr_work_order_spk_tree" model="ir.ui.view">
+            <field name="name">hr.work.order.spk.tree</field>
+            <field name="model">hr.work.order.spk</field>
+            <field name="arch" type="xml">
+                <list string="Work Orders (SPK)" decoration-warning="state == 'draft'" decoration-success="state == 'completed'">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="job_title"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="total_amount" sum="Total"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- hr.work.order.spk Form View -->
+        <record id="hr_work_order_spk_form" model="ir.ui.view">
+            <field name="name">hr.work.order.spk.form</field>
+            <field name="model">hr.work.order.spk</field>
+            <field name="arch" type="xml">
+                <form string="Work Order (SPK)">
+                    <header>
+                        <button name="action_approve_spk" type="object" string="Approve" invisible="state != 'draft'" class="btn-primary"/>
+                        <button name="action_generate_spk_pdf" type="object" string="Generate PDF" invisible="state != 'approved'"/>
+                        <button name="action_mark_signed" type="object" string="Mark as Signed" invisible="state != 'approved'"/>
+                        <button name="action_activate" type="object" string="Activate" invisible="state != 'signed'" class="btn-primary"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,approved,signed,active,completed,archived"/>
+                    </header>
+                    <sheet>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+
+                        <group>
+                            <group string="Employee">
+                                <field name="employee_id" required="1"/>
+                                <field name="outsource_client_id" required="1"/>
+                            </group>
+                            <group string="Assignment">
+                                <field name="job_title" required="1"/>
+                                <field name="location"/>
+                            </group>
+                        </group>
+
+                        <field name="job_description" nolabel="1" colspan="2" placeholder="Describe the work to be done..."/>
+
+                        <group>
+                            <group string="Period">
+                                <field name="start_date" required="1"/>
+                                <field name="end_date"/>
+                                <field name="total_days" readonly="1"/>
+                            </group>
+                            <group string="Compensation">
+                                <field name="daily_rate" required="1"/>
+                                <field name="total_amount" readonly="1"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="PDF" name="pdf">
+                                <group invisible="not pdf_content">
+                                    <field name="pdf_content" nolabel="1"/>
+                                </group>
+                            </page>
+
+                            <page string="Signature" name="signature">
+                                <group>
+                                    <field name="signed_date" readonly="1"/>
+                                    <field name="signed_copy"/>
+                                </group>
+                            </page>
+
+                            <page string="Approval" name="approval">
+                                <group>
+                                    <field name="approved_by" readonly="1"/>
+                                    <field name="approved_date" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action for hr.work.order.spk -->
+        <record id="action_hr_work_order_spk" model="ir.actions.act_window">
+            <field name="name">Work Orders (SPK)</field>
+            <field name="res_model">hr.work.order.spk</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="hr_work_order_spk_tree"/>
+            <field name="help">Create work orders (SPK) for outsourced employees</field>
+        </record>
+
+        <!-- ================================================================ -->
+        <!-- MENU ITEMS -->
+        <!-- ================================================================ -->
+
+        <!-- Parent Menu for Payments & Documents -->
+        <menuitem id="menu_payments_documents" 
+                 name="Payments &amp; Documents" 
+                 sequence="15"
+                 web_icon="fa-exchange"/>
+
+        <!-- Submenu: Salary Payments -->
+        <menuitem id="menu_payroll_payment"
+                 name="Salary Payments"
+                 parent="menu_payments_documents"
+                 sequence="10"
+                 action="action_hr_payroll_payment_run"/>
+
+        <!-- Submenu: Vendor Management -->
+        <menuitem id="menu_vendor_invoices"
+                 name="Vendor Invoices"
+                 parent="menu_payments_documents"
+                 sequence="20"
+                 action="action_account_invoice_incoming"/>
+
+        <menuitem id="menu_vendor_payments"
+                 name="Vendor Payments"
+                 parent="menu_payments_documents"
+                 sequence="21"
+                 action="action_account_payment_run"/>
+
+        <!-- Submenu: Customer Documents -->
+        <menuitem id="menu_customer_invoices"
+                 name="Customer Invoices"
+                 parent="menu_payments_documents"
+                 sequence="30"
+                 action="action_sale_invoice_customer"/>
+
+        <menuitem id="menu_work_orders"
+                 name="Work Orders (SPK)"
+                 parent="menu_payments_documents"
+                 sequence="31"
+                 action="action_hr_work_order_spk"/>
+
+    </data>
+</odoo>
+
+

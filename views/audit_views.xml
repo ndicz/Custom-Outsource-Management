@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ACCOUNTING PERIOD VIEWS -->
+    <record id="view_accounting_period_list" model="ir.ui.view">
+        <field name="name">accounting.period.list</field>
+        <field name="model">accounting.period</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'closed'" decoration-warning="state == 'locked'">
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="state"/>
+                <field name="closed_by"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_accounting_period_form" model="ir.ui.view">
+        <field name="name">accounting.period.form</field>
+        <field name="model">accounting.period</field>
+        <field name="arch" type="xml">
+            <form string="Periode Akuntansi">
+                <header>
+                    <button name="action_close_period" type="object" string="Close Period" 
+                            invisible="state != 'open'" class="btn-primary"/>
+                    <button name="action_lock_period" type="object" string="Lock Period" 
+                            invisible="state in ('locked', 'closed')" class="btn-warning"/>
+                    <button name="action_reopen_period" type="object" string="Reopen Period" 
+                            invisible="state != 'closed'" class="btn-danger" groups="account.group_account_manager"/>
+                    <field name="state" widget="statusbar" nolabel="1"/>
+                </header>
+                <sheet>
+                    <h1>
+                        <field name="name" readonly="1"/>
+                    </h1>
+                    <group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="company_id"/>
+                        </group>
+                    </group>
+
+                    <group string="Period Closing Checklist">
+                        <field name="payslips_all_posted" readonly="1"/>
+                        <field name="expenses_all_approved" readonly="1"/>
+                        <field name="invoices_all_posted" readonly="1"/>
+                        <field name="purchase_orders_billed" readonly="1"/>
+                        <field name="bank_reconciled"/>
+                        <field name="gl_reconciled"/>
+                    </group>
+
+                    <group string="Closing Details">
+                        <field name="closing_notes" nolabel="1"/>
+                    </group>
+
+                    <group>
+                        <group>
+                            <field name="closed_by" readonly="1"/>
+                            <field name="closed_date" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="reopened_by" readonly="1"/>
+                            <field name="reopened_date" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_ids" widget="mail_thread"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_accounting_period" model="ir.actions.act_window">
+        <field name="name">Periode Akuntansi</field>
+        <field name="res_model">accounting.period</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- GL RECONCILIATION VIEWS -->
+    <record id="view_account_reconciliation_list" model="ir.ui.view">
+        <field name="name">account.reconciliation.list</field>
+        <field name="model">account.reconciliation</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'approved'" decoration-warning="state in ('in_progress', 'completed')">
+                <field name="name"/>
+                <field name="account_id"/>
+                <field name="reconciliation_type"/>
+                <field name="date_reconciliation"/>
+                <field name="variance" sum="Total Variance"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_reconciliation_form" model="ir.ui.view">
+        <field name="name">account.reconciliation.form</field>
+        <field name="model">account.reconciliation</field>
+        <field name="arch" type="xml">
+            <form string="Rekonsiliasi GL">
+                <header>
+                    <button name="action_start_reconciliation" type="object" string="Start" 
+                            invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_complete_reconciliation" type="object" string="Complete" 
+                            invisible="state != 'in_progress'" class="btn-primary"/>
+                    <button name="action_approve_reconciliation" type="object" string="Approve" 
+                            invisible="state != 'completed'" class="btn-success" 
+                            groups="account.group_account_manager"/>
+                    <button name="action_reset_draft" type="object" string="Reset to Draft" 
+                            invisible="state == 'draft'" class="btn-warning"/>
+                    <field name="state" widget="statusbar" nolabel="1"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="account_id"/>
+                            <field name="reconciliation_type"/>
+                        </group>
+                        <group>
+                            <field name="date_reconciliation"/>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                        </group>
+                    </group>
+
+                    <group string="Balance Summary">
+                        <group>
+                            <field name="expected_balance" readonly="1" widget="monetary"/>
+                            <field name="reconciled_balance" widget="monetary"/>
+                        </group>
+                        <group>
+                            <field name="variance" readonly="1" widget="monetary"/>
+                        </group>
+                    </group>
+
+                    <group string="Aging Analysis" invisible="reconciliation_type not in ('receivable', 'payable')">
+                        <field name="aging_0_30_days" readonly="1" widget="monetary"/>
+                        <field name="aging_31_60_days" readonly="1" widget="monetary"/>
+                        <field name="aging_61_90_days" readonly="1" widget="monetary"/>
+                        <field name="aging_over_90_days" readonly="1" widget="monetary"/>
+                    </group>
+
+                    <group string="Variance Explanation" invisible="variance == 0.0">
+                        <field name="variance_explanation" nolabel="1"/>
+                    </group>
+
+                    <group string="Catatan">
+                        <field name="reconciliation_notes" nolabel="1"/>
+                    </group>
+
+                    <group string="Detail Rekonsiliasi">
+                        <field name="reconciliation_line_ids" nolabel="1">
+                            <list>
+                                <field name="date"/>
+                                <field name="reference"/>
+                                <field name="description"/>
+                                <field name="debit" widget="monetary" sum="Total"/>
+                                <field name="credit" widget="monetary" sum="Total"/>
+                                <field name="balance" widget="monetary"/>
+                                <field name="status"/>
+                            </list>
+                        </field>
+                    </group>
+
+                    <group>
+                        <group>
+                            <field name="prepared_by" readonly="1"/>
+                            <field name="approved_by" readonly="1"/>
+                            <field name="approved_date" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_ids" widget="mail_thread"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_account_reconciliation" model="ir.actions.act_window">
+        <field name="name">Rekonsiliasi GL</field>
+        <field name="res_model">account.reconciliation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- TAX PAYMENT TRACKING VIEWS -->
+    <record id="view_tax_payment_tracking_list" model="ir.ui.view">
+        <field name="name">tax.payment.tracking.list</field>
+        <field name="model">tax.payment.tracking</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'reconciled'" decoration-warning="state in ('verified', 'paid')">
+                <field name="name"/>
+                <field name="tax_type"/>
+                <field name="tax_period"/>
+                <field name="total_withheld" widget="monetary" sum="Total"/>
+                <field name="payment_amount" widget="monetary" sum="Total"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_tax_payment_tracking_form" model="ir.ui.view">
+        <field name="name">tax.payment.tracking.form</field>
+        <field name="model">tax.payment.tracking</field>
+        <field name="arch" type="xml">
+            <form string="Tracking Pembayaran Pajak">
+                <header>
+                    <button name="action_verify" type="object" string="Verify" 
+                            invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_record_payment" type="object" string="Record Payment" 
+                            invisible="state != 'verified'" class="btn-success"/>
+                    <button name="action_reconcile_payment" type="object" string="Reconcile" 
+                            invisible="state != 'paid'" class="btn-primary"/>
+                    <button name="action_reset_draft" type="object" string="Reset to Draft" 
+                            invisible="state == 'draft'" class="btn-warning"/>
+                    <field name="state" widget="statusbar" nolabel="1"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="tax_type"/>
+                            <field name="tax_period"/>
+                        </group>
+                        <group>
+                            <field name="company_id"/>
+                        </group>
+                    </group>
+
+                    <group string="Witholding Information">
+                        <group>
+                            <field name="total_withheld" readonly="1" widget="monetary"/>
+                            <field name="calculation_notes" nolabel="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Payment Information">
+                        <group>
+                            <field name="payment_amount" widget="monetary"/>
+                            <field name="payment_date"/>
+                            <field name="payment_method"/>
+                        </group>
+                        <group>
+                            <field name="payment_reference"/>
+                            <field name="gl_account_id"/>
+                        </group>
+                    </group>
+
+                    <group string="Catatan Pembayaran">
+                        <field name="payment_notes" nolabel="1"/>
+                    </group>
+
+                    <group string="Detail Items">
+                        <field name="tax_detail_ids" nolabel="1">
+                            <list>
+                                <field name="date"/>
+                                <field name="reference"/>
+                                <field name="description"/>
+                                <field name="amount_withheld" widget="monetary"/>
+                                <field name="amount_paid" widget="monetary"/>
+                                <field name="status"/>
+                            </list>
+                        </field>
+                    </group>
+
+                    <group>
+                        <group>
+                            <field name="prepared_by" readonly="1"/>
+                            <field name="verified_by" readonly="1"/>
+                            <field name="verified_date" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="paid_by" readonly="1"/>
+                            <field name="paid_datetime" readonly="1"/>
+                            <field name="move_id" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_ids" widget="mail_thread"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_tax_payment_tracking" model="ir.actions.act_window">
+        <field name="name">Tracking Pembayaran Pajak</field>
+        <field name="res_model">tax.payment.tracking</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- MENU ITEMS -->
+    <menuitem id="menu_accounting_audit"
+              name="Audit &amp; Compliance"
+              parent="account.menu_finance"
+              sequence="60"/>
+
+    <menuitem id="menu_period_closing"
+              name="Periode &amp; Tutup Buku"
+              parent="menu_accounting_audit"
+              action="action_accounting_period"
+              sequence="10"/>
+
+    <menuitem id="menu_gl_reconciliation"
+              name="Rekonsiliasi GL"
+              parent="menu_accounting_audit"
+              action="action_account_reconciliation"
+              sequence="20"/>
+
+    <menuitem id="menu_tax_payment"
+              name="Tracking Pembayaran Pajak"
+              parent="menu_accounting_audit"
+              action="action_tax_payment_tracking"
+              sequence="30"/>
+</odoo>

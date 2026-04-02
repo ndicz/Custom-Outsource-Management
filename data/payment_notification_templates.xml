@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Email Template: Payment Ready -->
+        <record id="notification_template_payment_ready" model="payment.notification.template">
+            <field name="name">Payment Ready to Upload</field>
+            <field name="notification_type">payment_ready</field>
+            <field name="subject">💰 Payment Ready: {{payment_ref}} - Rp {{amount}}</field>
+            <field name="body_html"><![CDATA[
+                <p>Dear Finance Team,</p>
+                <p>The following payment is ready to be uploaded to your bank:</p>
+                <table style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+                    <tr style="background-color: #f2f2f2;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Reference</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{payment_ref}}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Amount</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Rp {{amount}}</td>
+                    </tr>
+                    <tr style="background-color: #f2f2f2;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>File Ready</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">ABC Format Bank File (Ready to Download)</td>
+                    </tr>
+                </table>
+                <p><strong>Action Required:</strong></p>
+                <ol>
+                    <li>Download the ABC format file from the payment run</li>
+                    <li>Upload to your bank's online portal</li>
+                    <li>Confirm payment execution</li>
+                    <li>Upload payment proof back to Odoo for reconciliation</li>
+                </ol>
+                <p>Best regards,<br/><strong>Finance System</strong></p>
+            ]]></field>
+            <field name="auto_send">True</field>
+        </record>
+
+        <!-- Email Template: Payment Overdue -->
+        <record id="notification_template_payment_overdue" model="payment.notification.template">
+            <field name="name">Payment Overdue Reminder</field>
+            <field name="notification_type">payment_overdue</field>
+            <field name="subject">⚠️ OVERDUE: {{invoice_ref}} - {{days_overdue}} days past due</field>
+            <field name="body_html"><![CDATA[
+                <p>Dear Finance Team,</p>
+                <p style="color: #d32f2f; font-weight: bold;">The following invoice is now OVERDUE:</p>
+                <table style="border-collapse: collapse; width: 100%; margin: 20px 0; border: 2px solid #d32f2f;">
+                    <tr style="background-color: #ffebee;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Vendor Invoice</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{invoice_ref}}</td>
+                    </tr>
+                    <tr style="background-color: #ffebee;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Days Overdue</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px; color: #d32f2f; font-weight: bold;">{{days_overdue}} DAYS</td>
+                    </tr>
+                    <tr style="background-color: #ffebee;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Due Date</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{due_date}}</td>
+                    </tr>
+                    <tr style="background-color: #ffebee;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Amount Due</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{amount}}</td>
+                    </tr>
+                </table>
+                <p><strong>Action Required:</strong></p>
+                <ol>
+                    <li>Review the vendor invoice urgently</li>
+                    <li>Process payment immediately</li>
+                    <li>Contact vendor if there are payment issues</li>
+                </ol>
+                <p>Best regards,<br/><strong>Finance System</strong></p>
+            ]]></field>
+            <field name="auto_send">True</field>
+            <field name="overdue_days">0</field>
+        </record>
+
+        <!-- Email Template: Payment Reconciled -->
+        <record id="notification_template_payment_reconciled" model="payment.notification.template">
+            <field name="name">Payment Successfully Reconciled</field>
+            <field name="notification_type">payment_reconciled</field>
+            <field name="subject">✅ Payment Confirmed: {{payment_ref}} - Reconciled Successfully</field>
+            <field name="body_html"><![CDATA[
+                <p>Dear Finance Team,</p>
+                <p style="color: #388e3c; font-weight: bold;">The following payment has been successfully reconciled and posted to GL:</p>
+                <table style="border-collapse: collapse; width: 100%; margin: 20px 0; border: 2px solid #388e3c;">
+                    <tr style="background-color: #e8f5e9;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Payment Reference</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{payment_ref}}</td>
+                    </tr>
+                    <tr style="background-color: #e8f5e9;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Amount</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{amount}}</td>
+                    </tr>
+                    <tr style="background-color: #e8f5e9;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Status</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px; color: #388e3c; font-weight: bold;">✅ RECONCILED</td>
+                    </tr>
+                    <tr style="background-color: #e8f5e9;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>GL Status</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">✅ Posted to General Ledger</td>
+                    </tr>
+                </table>
+                <p>The payment is now complete and fully reconciled. No further action required.</p>
+                <p>Best regards,<br/><strong>Finance System</strong></p>
+            ]]></field>
+            <field name="auto_send">True</field>
+        </record>
+
+        <!-- Email Template: 3-way Match Failed -->
+        <record id="notification_template_3way_match_failed" model="payment.notification.template">
+            <field name="name">3-Way Match Verification Failed</field>
+            <field name="notification_type">3way_match_failed</field>
+            <field name="subject">⚠️ 3-Way Match Alert: {{invoice_ref}} - Variance Detected</field>
+            <field name="body_html"><![CDATA[
+                <p>Dear Finance Team,</p>
+                <p style="color: #f57c00; font-weight: bold;">A 3-way match verification issue has been detected for the following invoice:</p>
+                <table style="border-collapse: collapse; width: 100%; margin: 20px 0; border: 2px solid #f57c00;">
+                    <tr style="background-color: #fff3e0;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Invoice Reference</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{invoice_ref}}</td>
+                    </tr>
+                    <tr style="background-color: #fff3e0;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Match Status</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px; color: #f57c00; font-weight: bold;">VARIANCE DETECTED</td>
+                    </tr>
+                    <tr style="background-color: #fff3e0;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Details</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{variance_details}}</td>
+                    </tr>
+                </table>
+                <p><strong>Recommended Actions:</strong></p>
+                <ol>
+                    <li>Review PO (Purchase Order) amount vs Invoice amount</li>
+                    <li>Verify GRN (Goods Receipt Note) quantity and amount</li>
+                    <li>Contact vendor if discrepancies are found</li>
+                    <li>Resolve the variance before approving payment</li>
+                </ol>
+                <p><em>Note: This payment may still be processed, but it has been flagged for manual review.</em></p>
+                <p>Best regards,<br/><strong>Finance System</strong></p>
+            ]]></field>
+            <field name="auto_send">True</field>
+        </record>
+
+        <!-- Email Template: Payment Proof Received -->
+        <record id="notification_template_payment_proof_received" model="payment.notification.template">
+            <field name="name">Payment Proof Received</field>
+            <field name="notification_type">payment_proof_received</field>
+            <field name="subject">📧 Payment Proof Received: {{payment_ref}}</field>
+            <field name="body_html"><![CDATA[
+                <p>Dear Finance Team,</p>
+                <p>Payment proof has been successfully received and uploaded for the following payment:</p>
+                <table style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+                    <tr style="background-color: #f2f2f2;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Payment Reference</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{payment_ref}}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Amount</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">{{amount}}</td>
+                    </tr>
+                    <tr style="background-color: #f2f2f2;">
+                        <td style="border: 1px solid #ddd; padding: 8px;"><strong>Proof Status</strong></td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Awaiting Reconciliation</td>
+                    </tr>
+                </table>
+                <p>The system will now verify the payment and reconcile the GL entry.</p>
+                <p>Best regards,<br/><strong>Finance System</strong></p>
+            ]]></field>
+            <field name="auto_send">True</field>
+        </record>
+
+    </data>
+</odoo>

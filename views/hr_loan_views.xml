@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- HR Salary History Views -->
+    <record id="view_hr_salary_history_list" model="ir.ui.view">
+        <field name="name">hr.salary.history.list</field>
+        <field name="model">hr.salary.history</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="employee_id"/>
+                <field name="effective_date"/>
+                <field name="basic_salary" widget="monetary"/>
+                <field name="allowance" widget="monetary"/>
+                <field name="reason"/>
+                <field name="created_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hr_salary_history_form" model="ir.ui.view">
+        <field name="name">hr.salary.history.form</field>
+        <field name="model">hr.salary.history</field>
+        <field name="arch" type="xml">
+            <form string="Riwayat Gaji" create="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="employee_id" readonly="1"/>
+                            <field name="effective_date" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="reason" readonly="1"/>
+                            <field name="created_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Gaji">
+                        <field name="basic_salary" readonly="1" widget="monetary"/>
+                        <field name="allowance" readonly="1" widget="monetary"/>
+                    </group>
+                    <group string="Keterangan">
+                        <field name="description" nolabel="1" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- HR Employee Loan Views -->
+    <record id="view_hr_employee_loan_list" model="ir.ui.view">
+        <field name="name">hr.employee.loan.list</field>
+        <field name="model">hr.employee.loan</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="loan_type"/>
+                <field name="loan_amount" widget="monetary"/>
+                <field name="remaining_balance" widget="monetary"/>
+                <field name="monthly_installment" widget="monetary"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_loan_form" model="ir.ui.view">
+        <field name="name">hr.employee.loan.form</field>
+        <field name="model">hr.employee.loan</field>
+        <field name="arch" type="xml">
+            <form string="Pinjaman Karyawan">
+                <header>
+                    <button name="action_approve" type="object" string="Approve" 
+                        invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_disburse" type="object" string="Cairkan" 
+                        invisible="state != 'approved'" class="btn-success"/>
+                    <field name="state" widget="statusbar" nolabel="1"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="employee_id"/>
+                            <field name="loan_type"/>
+                        </group>
+                        <group>
+                            <field name="loan_date"/>
+                            <field name="tenure_months"/>
+                        </group>
+                    </group>
+                    <group string="Jumlah Pinjaman">
+                        <group>
+                            <field name="loan_amount" widget="monetary"/>
+                            <field name="interest_rate"/>
+                        </group>
+                        <group>
+                            <field name="total_amount_with_interest" widget="monetary" readonly="1"/>
+                            <field name="monthly_installment" widget="monetary" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Status Pembayaran">
+                        <group>
+                            <field name="total_paid" widget="monetary" readonly="1"/>
+                            <field name="remaining_balance" widget="monetary" readonly="1"/>
+                        </group>
+                    </group>
+                    <separator string="Jadwal Cicilan"/>
+                    <field name="loan_installment_ids" nolabel="1" readonly="1">
+                        <list>
+                            <field name="installment_number"/>
+                            <field name="due_date"/>
+                            <field name="amount" widget="monetary"/>
+                            <field name="paid_date"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_hr_employee_loan" model="ir.actions.act_window">
+        <field name="name">Pinjaman Karyawan</field>
+        <field name="res_model">hr.employee.loan</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Search filter for loans -->
+    <record id="view_hr_employee_loan_search" model="ir.ui.view">
+        <field name="name">hr.employee.loan.search</field>
+        <field name="model">hr.employee.loan</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="employee_id"/>
+                <field name="loan_type"/>
+                <separator/>
+                <filter name="active" string="Cicilan Berjalan" domain="[('state', '=', 'active')]"/>
+                <filter name="completed" string="Lunas" domain="[('state', '=', 'completed')]"/>
+            </search>
+        </field>
+    </record>
+</odoo>

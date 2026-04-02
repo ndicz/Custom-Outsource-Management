@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_employee_form_outsource" model="ir.ui.view">
+        <field name="name">hr.employee.form.outsource</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="outsource_placement" string="Outsource">
+                    <group string="Penempatan">
+                        <field name="outsource_client_id"/>
+                        <field name="outsource_project_id"/>
+                        <field name="placement_start_date"/>
+                        <field name="placement_end_date"/>
+                    </group>
+                    <group string="Pajak &amp; BPJS">
+                        <field name="ptkp_status"/>
+                        <field name="bpjs_kesehatan_number"/>
+                        <field name="bpjs_tk_number"/>
+                    </group>
+                </page>
+                <page name="salary_info" string="Gaji &amp; Tunjangan">
+                    <group string="Gaji Bulanan">
+                        <field name="basic_salary" widget="monetary"/>
+                        <field name="manual_allowance" widget="monetary"/>
+                        <field name="allowance" widget="monetary" readonly="1"/>
+                        <field name="manual_deduction" widget="monetary"/>
+                        <field name="deduction" widget="monetary" readonly="1"/>
+                    </group>
+                    <group string="Rincian Tunjangan">
+                        <field name="allowance_line_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="name"/>
+                                <field name="amount" sum="Total"/>
+                                <field name="note"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group string="Rincian Potongan">
+                        <field name="deduction_line_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="name"/>
+                                <field name="amount" sum="Total"/>
+                                <field name="note"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group string="Perhitungan Gaji">
+                        <field name="gross_salary" widget="monetary" readonly="1"/>
+                        <field name="pph21_amount" widget="monetary" readonly="1"/>
+                        <field name="bpjs_total" widget="monetary" readonly="1"/>
+                        <field name="net_salary" widget="monetary" readonly="1" style="font-weight: bold; color: #28a745; font-size: 14px;"/>
+                    </group>
+                    <group string="Hari Kerja">
+                        <field name="days_worked_current_month"/>
+                        <field name="total_days_worked_year"/>
+                    </group>
+                </page>
+                <page name="salary_summary" string="Laporan Gaji">
+                    <group string="Summary Gaji Tahunan" style="background-color: #f8f9fa; padding: 12px; border-radius: 4px;">
+                        <group>
+                            <div class="o_form_label font-weight-bold">Gaji Kotor Tahunan:</div>
+                            <field name="annual_gross" widget="monetary" readonly="1" nolabel="1" style="font-size: 14px;"/>
+                        </group>
+                        <group>
+                            <div class="o_form_label font-weight-bold">Potongan/Pajak/BPJS Tahunan:</div>
+                            <field name="annual_tax" widget="monetary" readonly="1" nolabel="1" style="font-size: 14px;"/>
+                        </group>
+                        <group>
+                            <div class="o_form_label font-weight-bold">Gaji Bersih Tahunan:</div>
+                            <field name="annual_net" widget="monetary" readonly="1" nolabel="1" style="font-weight: bold; color: #28a745; font-size: 16px;"/>
+                        </group>
+                    </group>
+                    <separator string="Daftar Slip Gaji"/>
+                    <group string="Slip Gaji">
+                        <field name="payslip_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="name"/>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="gross_salary" widget="monetary"/>
+                                <field name="net_salary" widget="monetary"/>
+                                <field name="state"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_search_outsource" model="ir.ui.view">
+        <field name="name">hr.employee.search.outsource</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter name="with_salary" string="Dengan Gaji" domain="[('basic_salary', '&gt;', 0)]"/>
+                <filter name="active_placement" string="Penempatan Aktif" domain="[('placement_end_date', '=', False)]"/>
+                <filter name="high_salary" string="Gaji Tinggi (&gt;20jt)" domain="[('basic_salary', '&gt;', 20000000)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

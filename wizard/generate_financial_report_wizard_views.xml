@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_generate_financial_report_wizard_form" model="ir.ui.view">
+        <field name="name">generate.financial.report.wizard.form</field>
+        <field name="model">generate.financial.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generate Laporan Keuangan">
+                <group>
+                    <field name="report_type"/>
+                    <field name="period_start"/>
+                    <field name="period_end"/>
+                </group>
+                <footer>
+                    <button name="action_generate_report" type="object" string="Generate Laporan" class="btn-primary"/>
+                    <button string="Batal" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_generate_financial_report_wizard" model="ir.actions.act_window">
+        <field name="name">Generate Laporan Keuangan</field>
+        <field name="res_model">generate.financial.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_generate_financial_report"
+              name="Generate Laporan Baru"
+              parent="menu_financial_reports"
+              action="action_generate_financial_report_wizard"
+              sequence="5"/>
+</odoo>

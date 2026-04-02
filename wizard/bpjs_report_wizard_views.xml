@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_bpjs_report_wizard_form" model="ir.ui.view">
+        <field name="name">outsource.bpjs.report.wizard.form</field>
+        <field name="model">outsource.bpjs.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Laporan BPJS Bulanan">
+                <group invisible="state == 'done'">
+                    <group string="Periode">
+                        <field name="month"/>
+                        <field name="year"/>
+                    </group>
+                </group>
+                <group invisible="state != 'done'">
+                    <field name="file_data" filename="filename" widget="binary"
+                           string="File CSV BPJS siap download"/>
+                    <field name="filename" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="action_export_bpjs" type="object"
+                            string="Generate Laporan" class="btn-primary"
+                            invisible="state == 'done'"/>
+                    <button special="cancel" string="Tutup"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

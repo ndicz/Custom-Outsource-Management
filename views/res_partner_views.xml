@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_outsource" model="ir.ui.view">
+        <field name="name">res.partner.form.outsource</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="outsource_info" string="Outsource">
+                    <group>
+                        <field name="npwp" placeholder="XX.XXX.XXX.X-XXX.XXX"/>
+                        <field name="is_pkp" widget="boolean_toggle"/>
+                        <field name="client_type"/>
+                        <field name="analytic_account_id"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

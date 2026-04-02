@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sequences for Operational Expenses -->
+    <record id="seq_operational_expense_reference" model="ir.sequence">
+        <field name="name">Operational Expense Reference</field>
+        <field name="code">operational.expense.reference</field>
+        <field name="prefix">EXP/%(year)s/%(month)02d/</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="padding">4</field>
+        <field name="implementation">standard</field>
+    </record>
+</odoo>

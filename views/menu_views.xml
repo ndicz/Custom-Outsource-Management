@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu Outsource di top level -->
+    <menuitem id="menu_outsource_root"
+              name="Outsource"
+              sequence="5"
+              web_icon="outsource_custom,static/description/icon.png"/>
+
+    <!-- Sub-menu Klien -->
+    <menuitem id="menu_outsource_clients"
+              name="Klien"
+              parent="menu_outsource_root"
+              sequence="10"/>
+    <menuitem id="menu_outsource_clients_list"
+              name="Daftar klien"
+              parent="menu_outsource_clients"
+              action="base.action_partner_form"
+              sequence="10"/>
+
+    <!-- Sub-menu Pajak & Laporan -->
+    <menuitem id="menu_outsource_tax"
+              name="Pajak &amp; laporan"
+              parent="menu_outsource_root"
+              sequence="40"/>
+    <menuitem id="menu_efaktur_export"
+              name="Export e-Faktur"
+              parent="menu_outsource_tax"
+              action="outsource_custom.action_efaktur_wizard_accounting"
+              sequence="10"/>
+    <menuitem id="menu_bpjs_report"
+              name="Laporan BPJS bulanan"
+              parent="menu_outsource_tax"
+              action="outsource_custom.action_bpjs_wizard"
+              sequence="20"/>
+
+    <!-- Sub-menu Setup Payroll -->
+    <menuitem id="menu_outsource_setup"
+              name="Setup Payroll"
+              parent="menu_outsource_root"
+              sequence="25"/>
+    <menuitem id="menu_salary_component"
+              name="Komponen Gaji"
+              parent="menu_outsource_setup"
+              action="outsource_custom.action_hr_salary_component"
+              sequence="10"/>
+    <menuitem id="menu_salary_structure"
+              name="Struktur Gaji"
+              parent="menu_outsource_setup"
+              action="outsource_custom.action_hr_salary_structure"
+              sequence="20"/>
+
+    <menuitem id="menu_outsource_payroll"
+              name="Payroll"
+              parent="menu_outsource_root"
+              sequence="30"/>
+    <menuitem id="menu_outsource_payslip"
+              name="Slip Gaji"
+              parent="menu_outsource_payroll"
+              action="outsource_custom.action_outsource_payslip"
+              sequence="10"/>
+    <menuitem id="menu_payroll_period"
+              name="Periode Payroll"
+              parent="menu_outsource_payroll"
+              action="outsource_custom.action_hr_payroll_period"
+              sequence="15"/>
+    <menuitem id="menu_outsource_employee_salary"
+              name="Gaji Karyawan"
+              parent="menu_outsource_payroll"
+              action="hr.open_view_employee_list"
+              sequence="20"/>
+    <menuitem id="menu_employee_loans"
+              name="Pinjaman Karyawan"
+              parent="menu_outsource_payroll"
+              action="outsource_custom.action_hr_employee_loan"
+              sequence="25"/>
+    <menuitem id="menu_outsource_salary_summary"
+              name="Summary Gaji Tahunan"
+              parent="menu_outsource_payroll"
+              action="outsource_custom.action_salary_summary_report"
+              sequence="30"/>
+
+    <record id="action_payslip_bank_export_menu" model="ir.actions.act_window">
+        <field name="name">Export Payroll untuk Bank</field>
+        <field name="res_model">payslip.bank.export.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_payslip_bank_export"
+              name="Export Payroll"
+              parent="menu_outsource_payroll"
+              action="outsource_custom.action_payslip_bank_export_menu"
+              sequence="40"/>
+</odoo>

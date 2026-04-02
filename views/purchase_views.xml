@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Purchase Order Extended Customizations -->
+    <record id="view_purchase_order_form_outsource" model="ir.ui.view">
+        <field name="name">purchase.order.form.outsource</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="project_id" groups="project.group_project_user"/>
+                <field name="analytic_account_id" groups="analytic.group_analytic_accounting"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_order_line_form" model="ir.ui.view">
+        <field name="name">purchase.order.line.form</field>
+        <field name="model">purchase.order.line</field>
+        <field name="inherit_id" ref="purchase.purchase_order_line_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='price_unit']" position="after">
+                <field name="cost_category" groups="purchase.group_purchase_user"/>
+                <field name="is_billable" groups="purchase.group_purchase_user"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_order_list_outsource" model="ir.ui.view">
+        <field name="name">purchase.order.list.outsource</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='date_order']" position="before">
+                <field name="project_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

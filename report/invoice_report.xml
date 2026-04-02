@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <report
+        id="action_report_outsource_invoice"
+        model="account.move"
+        string="Invoice Outsource"
+        report_type="qweb-pdf"
+        name="outsource_custom.report_outsource_invoice"
+        file="outsource_custom.report_outsource_invoice"
+        print_report_name="'Invoice - %s' % object.name"
+    />
+
+    <template id="report_outsource_invoice">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+
+                        <!-- Header -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <h2>INVOICE</h2>
+                                <p class="mb-0">
+                                    <strong>No. Invoice:</strong>
+                                    <t t-esc="doc.name"/>
+                                </p>
+                                <p t-if="doc.contract_number" class="mb-0">
+                                    <strong>No. Kontrak:</strong>
+                                    <t t-esc="doc.contract_number"/>
+                                </p>
+                                <p t-if="doc.po_number_client" class="mb-0">
+                                    <strong>No. PO Klien:</strong>
+                                    <t t-esc="doc.po_number_client"/>
+                                </p>
+                                <p t-if="doc.efaktur_number" class="mb-0">
+                                    <strong>No. Faktur Pajak:</strong>
+                                    <t t-esc="doc.efaktur_number"/>
+                                </p>
+                            </div>
+                            <div class="col-6 text-end">
+                                <p class="mb-0">
+                                    <strong>Tanggal:</strong>
+                                    <span t-field="doc.invoice_date"/>
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Jatuh tempo:</strong>
+                                    <span t-field="doc.invoice_date_due"/>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Tagihan kepada / Dari -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <h6>Tagihan kepada:</h6>
+                                <strong t-field="doc.partner_id.name"/><br/>
+                                <span t-field="doc.partner_id.street"/><br/>
+                                <span t-field="doc.partner_id.city"/><br/>
+                                <t t-if="doc.partner_id.npwp">
+                                    NPWP: <t t-esc="doc.partner_id.npwp"/>
+                                </t>
+                            </div>
+                            <div class="col-6">
+                                <h6>Dari:</h6>
+                                <strong t-field="doc.company_id.name"/><br/>
+                                <span t-field="doc.company_id.street"/><br/>
+                                <span t-field="doc.company_id.city"/><br/>
+                                NPWP: <t t-esc="doc.company_id.vat or '-'"/>
+                            </div>
+                        </div>
+
+                        <!-- Tabel item -->
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Keterangan</th>
+                                    <th class="text-center">Qty</th>
+                                    <th class="text-end">Harga satuan</th>
+                                    <th class="text-end">Jumlah</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.invoice_line_ids.filtered(lambda l: l.display_type == 'product')" t-as="line">
+                                    <tr>
+                                        <td>
+                                            <span t-field="line.name"/>
+                                            <small t-if="line.technical_note" class="text-muted d-block">
+                                                <t t-esc="line.technical_note"/>
+                                            </small>
+                                        </td>
+                                        <td class="text-center">
+                                            <t t-esc="line.quantity"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-esc="'Rp {:,.0f}'.format(line.price_unit)"/>
+                                        </td>
+                                        <td class="text-end">
+                                            <t t-esc="'Rp {:,.0f}'.format(line.price_subtotal)"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Subtotal -->
+                        <div class="row">
+                            <div class="col-6 offset-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td>DPP (subtotal)</td>
+                                        <td class="text-end">
+                                            <t t-esc="'Rp {:,.0f}'.format(doc.amount_untaxed)"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>PPN 11%</td>
+                                        <td class="text-end">
+                                            <t t-esc="'Rp {:,.0f}'.format(doc.amount_tax)"/>
+                                        </td>
+                                    </tr>
+                                    <tr class="fw-bold">
+                                        <td>Total</td>
+                                        <td class="text-end">
+                                            <t t-esc="'Rp {:,.0f}'.format(doc.amount_total)"/>
+                                        </td>
+                                    </tr>
+                                    <t t-if="doc.pph23_withheld">
+                                        <tr class="text-muted">
+                                            <td>
+                                                PPh 23 dipotong klien
+                                                (<t t-esc="'{:.0f}'.format(float(doc.pph23_rate or 0)*100)"/>%)
+                                            </td>
+                                            <td class="text-end text-danger">
+                                                (<t t-esc="'Rp {:,.0f}'.format(doc.pph23_amount)"/>)
+                                            </td>
+                                        </tr>
+                                        <tr class="fw-bold">
+                                            <td>Yang diterima (net)</td>
+                                            <td class="text-end">
+                                                <t t-esc="'Rp {:,.0f}'.format(doc.amount_received)"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Info pembayaran -->
+                        <div class="mt-4 p-3 bg-light border rounded">
+                            <h6>Instruksi pembayaran:</h6>
+                            <p t-if="doc.partner_id.payment_term_note">
+                                <t t-esc="doc.partner_id.payment_term_note"/>
+                            </p>
+                            <p t-else="">
+                                Harap transfer ke rekening perusahaan sesuai yang telah disepakati.
+                            </p>
+                            <p class="text-muted small mb-0">
+                                Bukti potong PPh 23 harap dikirimkan ke alamat perusahaan
+                                maksimal 1 bulan setelah pembayaran.
+                            </p>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

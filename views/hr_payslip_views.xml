@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_outsource_payslip_list" model="ir.ui.view">
+        <field name="name">outsource.payslip.list</field>
+        <field name="model">outsource.payslip</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'done'" decoration-warning="state in ('submitted', 'hr_verified')" decoration-info="state == 'finance_approved'">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="payroll_period_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="days_worked"/>
+                <field name="basic_salary" widget="monetary"/>
+                <field name="gross_salary" widget="monetary"/>
+                <field name="net_salary" widget="monetary"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_outsource_payslip_form" model="ir.ui.view">
+        <field name="name">outsource.payslip.form</field>
+        <field name="model">outsource.payslip</field>
+        <field name="arch" type="xml">
+            <form string="Slip Gaji">
+                <header>
+                    <button name="action_submit" type="object" string="Submit" 
+                        invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_hr_verify" type="object" string="HR Verify" 
+                        invisible="state != 'submitted'" class="btn-info"/>
+                    <button name="action_finance_approve" type="object" string="Finance Approve" 
+                        invisible="state != 'hr_verified'" class="btn-success"/>
+                    <button name="action_post" type="object" string="Post" 
+                        invisible="state != 'finance_approved'" class="btn-warning"/>
+                    <button name="action_done" type="object" string="Done" 
+                        invisible="state != 'posted'" class="btn-success"/>
+                    <button name="action_set_draft" type="object" string="Back to Draft" 
+                        invisible="state == 'draft'" class="btn-secondary"/>
+                    <field name="state" widget="statusbar" nolabel="1"/>
+                </header>
+                <sheet>
+                    <h2>Informasi Slip</h2>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1"/>
+                            <field name="employee_id"/>
+                            <field name="payroll_period_id"/>
+                        </group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="days_worked"/>
+                        </group>
+                    </group>
+
+                    <h2>Komponen Gaji</h2>
+                    <group>
+                        <group string="Penghasilan">
+                            <field name="basic_salary" widget="monetary"/>
+                            <field name="manual_allowance" widget="monetary"/>
+                            <field name="allowance" widget="monetary" readonly="1"/>
+                            <field name="overtime_hours"/>
+                            <field name="overtime_amount" widget="monetary" readonly="1"/>
+                        </group>
+                        <group string="Perhitungan">
+                            <field name="gross_salary" widget="monetary" readonly="1" style="background-color: #f0f0f0;"/>
+                        </group>
+                    </group>
+
+                    <group string="Rincian Tunjangan Bulanan">
+                        <field name="allowance_line_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="name"/>
+                                <field name="amount" sum="Total"/>
+                                <field name="note"/>
+                            </list>
+                        </field>
+                    </group>
+
+                    <h2>Potongan &amp; Pajak</h2>
+                    <group>
+                        <group string="Potongan &amp; Pajak">
+                            <field name="manual_deduction" widget="monetary"/>
+                            <field name="deduction" widget="monetary" readonly="1"/>
+                            <field name="pph21_amount" widget="monetary" readonly="1"/>
+                            <field name="bpjs_employee_amount" widget="monetary" readonly="1"/>
+                            <field name="loan_deduction" widget="monetary" readonly="1"/>
+                        </group>
+                        <group string="Catatan Potongan">
+                            <field name="deduction_notes" nolabel="1" placeholder="Izin 2 hari, Denda keterlambatan, dll..."/>
+                        </group>
+                    </group>
+
+                    <group string="Rincian Potongan Bulanan">
+                        <field name="deduction_line_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="name"/>
+                                <field name="amount" sum="Total"/>
+                                <field name="note"/>
+                            </list>
+                        </field>
+                    </group>
+
+                    <h2>BPJS Perusahaan</h2>
+                    <group>
+                        <field name="bpjs_employer_amount" widget="monetary" readonly="1"/>
+                    </group>
+
+                    <h2>Gaji Bersih</h2>
+                    <group>
+                        <field name="net_salary" widget="monetary" readonly="1" style="font-weight: bold; color: #28a745; font-size: 18px; background-color: #f8f9fa; padding: 10px; border-radius: 4px;"/>
+                    </group>
+
+                    <h2 invisible="state == 'draft'">Approval Workflow</h2>
+                    <group invisible="state == 'draft'">
+                        <group>
+                            <field name="submitted_by" readonly="1"/>
+                            <field name="submitted_date" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="verified_by" readonly="1"/>
+                            <field name="verified_date" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="approved_by" readonly="1"/>
+                            <field name="approved_date" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <field name="move_id" readonly="1" invisible="not move_id"/>
+                    <field name="rejection_reason" invisible="not rejection_reason" class="alert alert-warning"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_outsource_payslip" model="ir.actions.act_window">
+        <field name="name">Slip Gaji Outsource</field>
+        <field name="res_model">outsource.payslip</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_outsource_payslip_list"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Buat slip gaji baru untuk karyawan.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_salary_summary_report" model="ir.actions.act_window">
+        <field name="name">Summary Gaji Tahunan</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('basic_salary', '&gt;', 0)]</field>
+        <field name="context">{'search_default_outsource': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Lihat summary gaji tahunan per karyawan.
+            </p>
+        </field>
+    </record>
+
+</odoo>
