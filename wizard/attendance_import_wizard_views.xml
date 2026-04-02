@@ -16,10 +16,8 @@
                     <field name="default_absence_deduction_rate"/>
                     <field name="default_holiday_work_rate"/>
                 </group>
-                <group string="Format Kolom Wajib di File">
-                    <label string="Identitas: employee_id ATAU barcode ATAU work_email ATAU employee_name"/>
-                    <label string="Nilai: days_worked, absent_days, public_holiday_days, holiday_work_days, overtime_hours"/>
-                    <label string="Opsional: absence_deduction_rate, holiday_work_rate"/>
+                <group string="Panduan Format File">
+                    <field name="result_message" nolabel="1" readonly="1" placeholder="Identitas wajib: employee_id ATAU barcode ATAU work_email ATAU employee_name&#10;Nilai wajib: days_worked, absent_days, public_holiday_days, holiday_work_days, overtime_hours&#10;Nilai opsional: absence_deduction_rate, holiday_work_rate"/>
                 </group>
                 <group string="Hasil Import" invisible="not result_message">
                     <field name="result_message" readonly="1" nolabel="1"/>

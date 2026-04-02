@@ -67,4 +67,3 @@ access_payment_aging_report_user,payment.aging.report user,model_payment_aging_r
 access_payment_aging_report_manager,payment.aging.report manager,model_payment_aging_report,account.group_account_manager,1,0,0,0
 access_gl_posting_verification_report_user,gl.posting.verification.report user,model_gl_posting_verification_report,base.group_user,1,0,0,0
 access_gl_posting_verification_report_manager,gl.posting.verification.report manager,model_gl_posting_verification_report,account.group_account_manager,1,0,0,0
-access_attendance_import_wizard_user,attendance.import.wizard user,model_attendance_import_wizard,base.group_user,1,1,1,1
