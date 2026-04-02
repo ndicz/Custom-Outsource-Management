@@ -27,18 +27,21 @@ Dokumen ini adalah simulasi bisnis nyata dari awal sampai akhir untuk module Out
 
 ## 4. Setup Master (Hari 1)
 ### 4.1 Setup Klien
+- Klik menu: `Outsource > Klien > Daftar klien` (atau `Contacts` jika user lebih nyaman dari app Contacts).
 - Buat partner perusahaan:
   - PT Maju Retail (dengan NPWP)
   - PT Cipta Logistik (dengan NPWP)
 - Isi flag PKP jika relevan.
 
 ### 4.2 Setup Project & Analytic
+- Klik menu: `Outsource > Klien > Project` (atau app `Project`).
 - Buat 2 project dan analytic account terkait:
   - PRJ-MR-SEC
   - PRJ-CL-WHS
 - Hubungkan project ke klien masing-masing.
 
 ### 4.3 Setup Payroll Components
+- Klik menu: `Outsource > Setup Payroll > Komponen Gaji`.
 - Verifikasi komponen gaji default sudah tersedia:
   - Gaji Pokok
   - Tunjangan
@@ -48,6 +51,7 @@ Dokumen ini adalah simulasi bisnis nyata dari awal sampai akhir untuk module Out
   - BPJS
 
 ### 4.4 Setup Accounting Parameters
+- Klik menu: `Accounting > Configuration > Settings`.
 - Isi akun konfigurasi outsource:
   - Salary Expense
   - Salary Payable
@@ -56,6 +60,7 @@ Dokumen ini adalah simulasi bisnis nyata dari awal sampai akhir untuk module Out
 - Isi akun expense operasional per kategori.
 
 ## 5. Setup Karyawan (Hari 1-2)
+- Klik menu: `Outsource > Payroll > Gaji Karyawan`.
 Buat minimal 5 karyawan per project dulu untuk pilot test.
 
 Contoh data per karyawan:
@@ -72,6 +77,7 @@ Tambahkan juga 1 contoh pinjaman aktif untuk 1 karyawan agar cicilan otomatis te
 
 ## 6. Operasional Harian (Hari 2-25)
 ### 6.1 Purchase & Costing
+- Klik menu: `Purchases > Orders > Requests for Quotation` lalu konfirmasi menjadi PO.
 - Buat 3 Purchase Order:
   - Seragam satpam (billable ke klien)
   - HT/radio komunikasi (internal)
@@ -80,6 +86,7 @@ Tambahkan juga 1 contoh pinjaman aktif untuk 1 karyawan agar cicilan otomatis te
 - Validasi jurnal/invoice terkait terbentuk normal.
 
 ### 6.2 Operational Expense
+- Klik menu: `Outsource > Financial & Operations > Operational Expense`.
 - Input minimal 5 expense:
   - Transport supervisor
   - Utilities pos security
@@ -90,17 +97,20 @@ Tambahkan juga 1 contoh pinjaman aktif untuk 1 karyawan agar cicilan otomatis te
 - Pastikan bukti lampiran terisi untuk audit sample.
 
 ### 6.3 Sales & Invoicing
+- Klik menu: `Sales > Orders > Quotations` lalu `Accounting > Customers > Invoices`.
 - Buat SO bulanan ke kedua klien.
 - Buat invoice dan validasi posting.
 - Jika ada PPh23, pastikan field tax-withholding terisi.
 
 ## 7. Payroll + Absensi Import (Tanggal 26-28)
 ### 7.1 Buat Periode Payroll
+- Klik menu: `Outsource > Payroll > Periode Payroll`.
 - Periode: 01 Apr 2026 - 30 Apr 2026
 - Status: Open
 - Klik Auto-Generate Slips
 
 ### 7.2 Import Absensi dari Sistem Eksternal
+- Klik menu: `Outsource > Payroll > Periode Payroll > (pilih periode) > Import Absensi`.
 - Dari form Periode Payroll klik `Import Absensi`.
 - Upload file CSV/XLSX.
 - Field minimum yang dipakai sistem:
@@ -121,6 +131,7 @@ Tambahkan juga 1 contoh pinjaman aktif untuk 1 karyawan agar cicilan otomatis te
 - Overtime tetap dihitung sesuai jam lembur.
 
 ### 7.4 Validasi Slip
+- Klik menu: `Outsource > Payroll > Slip Gaji`.
 Periksa 3 contoh kondisi:
 - Karyawan A: hadir penuh, overtime 10 jam.
 - Karyawan B: alfa 2 hari.
@@ -134,9 +145,11 @@ Pastikan nilai:
 
 ## 8. Approval & Payment (Tanggal 28-30)
 ### 8.1 Workflow Approval
+- Klik menu: `Outsource > Payroll > Slip Gaji`.
 - Slip: Draft -> Submitted -> HR Verified -> Finance Approved -> Posted -> Done
 
 ### 8.2 Ekspor Payroll ke Bank
+- Klik menu: `Outsource > Payroll > Export Payroll`.
 - Jalankan wizard `Export Payroll`.
 - Coba format:
   - CSV generic
@@ -145,19 +158,23 @@ Pastikan nilai:
 
 ## 9. Pajak & Compliance (Akhir Bulan)
 ### 9.1 e-Faktur Export
+- Klik menu: `Outsource > Pajak & laporan > Export e-Faktur`.
 - Jalankan wizard export e-Faktur untuk invoice periode April.
 - Verifikasi format file dan nilai DPP/PPN.
 
 ### 9.2 BPJS Report
+- Klik menu: `Outsource > Pajak & laporan > Laporan BPJS bulanan`.
 - Jalankan wizard BPJS bulanan.
 - Verifikasi jumlah peserta dan total iuran.
 
 ### 9.3 PPh21/PPh23 Check
+- Klik menu: `Outsource > Payroll > Slip Gaji` (PPh21) dan `Accounting > Customers > Invoices` (PPh23).
 - Cek total PPh21 dari payslip periode.
 - Cek posting PPh23 dari invoice terkait.
 
 ## 10. Financial Reporting & Profitability
 ### 10.1 Generate Financial Report
+- Klik menu: `Outsource > Financial & Operations > Financial Report > Generate`.
 - Periode: 01 Apr 2026 - 30 Apr 2026
 - Output yang dicek:
   - Revenue
@@ -166,6 +183,7 @@ Pastikan nilai:
   - Net Profit
 
 ### 10.2 Generate Client Profitability
+- Klik menu: `Outsource > Financial & Operations > Client Profitability > Generate`.
 - Jalankan per klien.
 - Bandingkan margin PT Maju Retail vs PT Cipta Logistik.
 - Tentukan 1 keputusan bisnis:
@@ -175,6 +193,11 @@ Pastikan nilai:
 
 ## 11. Audit Trail & Closing
 ### 11.1 Audit Sampling
+- Klik menu: 
+  - `Outsource > Payroll > Slip Gaji`
+  - `Outsource > Financial & Operations > Operational Expense`
+  - `Purchases > Orders > Purchase Orders`
+  - `Accounting > Customers > Invoices`
 Ambil sampel 5 transaksi:
 - 2 payslip
 - 1 operational expense
@@ -208,6 +231,11 @@ Skenario dianggap lulus jika:
 - Minggu 4: Hardening + SOP final + handover
 
 ## 14. SOP Operasional Bulanan (Ringkas)
+Referensi menu utama:
+- Payroll: `Outsource > Payroll`
+- Pajak/BPJS: `Outsource > Pajak & laporan`
+- Expense/Report: `Outsource > Financial & Operations`
+
 1. Buka periode payroll
 2. Auto-generate payslip
 3. Import absensi eksternal
