@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend CRM Lead form with Outsource tab -->
+    <record id="view_crm_lead_form_outsource" model="ir.ui.view">
+        <field name="name">crm.lead.form.outsource</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="outsource_info" string="Outsource">
+                    <group string="Detail Kontrak">
+                        <field name="outsource_contract_type"/>
+                    </group>
+                    <group string="Tautan">
+                        <field name="outsource_sale_order_id" readonly="1"/>
+                        <field name="outsource_project_id" readonly="1"/>
+                    </group>
+                    <group>
+                        <button name="action_create_outsource_sale_order"
+                                type="object"
+                                string="Buat Sales Order"
+                                class="btn-primary"
+                                invisible="outsource_sale_order_id != False"/>
+                        <button name="action_create_outsource_sale_order"
+                                type="object"
+                                string="Lihat Sales Order"
+                                class="btn-secondary"
+                                invisible="outsource_sale_order_id == False"/>
+                        <button name="action_view_outsource_project"
+                                type="object"
+                                string="Lihat Proyek"
+                                class="btn-secondary"
+                                invisible="outsource_project_id == False"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -17,6 +17,11 @@ class ProjectProject(models.Model):
     billing_type     = fields.Char('Tipe billing')
     po_number_client = fields.Char('No. PO klien')
 
+    outsource_sale_order_id = fields.Many2one(
+        'sale.order', 'Sales Order', copy=False, readonly=True)
+    outsource_lead_id = fields.Many2one(
+        'crm.lead', 'CRM Lead', copy=False, readonly=True)
+
     placed_employee_ids = fields.One2many(
         'hr.employee', 'outsource_project_id', 'Karyawan ditempatkan')
 

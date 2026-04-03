@@ -21,6 +21,11 @@ class SaleOrder(models.Model):
         'Estimasi PPh 23',
         compute='_compute_pph23_amount', store=True)
 
+    outsource_lead_id = fields.Many2one(
+        'crm.lead', 'CRM Lead', copy=False, readonly=True)
+    outsource_project_id = fields.Many2one(
+        'project.project', 'Proyek', copy=False, readonly=True)
+
     @api.depends('amount_untaxed', 'pph23_applicable', 'pph23_rate')
     def _compute_pph23_amount(self):
         for o in self:
@@ -35,3 +40,34 @@ class SaleOrder(models.Model):
                 o.contract_number = (
                     self.env['ir.sequence'].next_by_code('outsource.contract') or '/')
         return super().action_confirm()
+
+    def action_create_outsource_project(self):
+        """Create a project from this Sales Order and link both ways."""
+        self.ensure_one()
+        if self.outsource_project_id:
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': 'project.project',
+                'res_id': self.outsource_project_id.id,
+                'view_mode': 'form',
+                'target': 'current',
+            }
+        project = self.env['project.project'].create({
+            'name': self.name or self.contract_number or self.partner_id.name,
+            'partner_id': self.partner_id.id,
+            'outsource_sale_order_id': self.id,
+            'outsource_lead_id': self.outsource_lead_id.id or False,
+            'contract_number': self.contract_number,
+            'billing_type': self.contract_type,
+            'po_number_client': self.po_number_client,
+        })
+        self.outsource_project_id = project
+        if self.outsource_lead_id:
+            self.outsource_lead_id.outsource_project_id = project
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'project.project',
+            'res_id': project.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }

@@ -21,6 +21,10 @@
                             </list>
                         </field>
                     </group>
+                    <group string="Tautan">
+                        <field name="outsource_sale_order_id" readonly="1"/>
+                        <field name="outsource_lead_id" readonly="1"/>
+                    </group>
                 </page>
             </xpath>
         </field>

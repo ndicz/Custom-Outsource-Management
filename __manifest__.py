@@ -39,6 +39,7 @@
         'views/account_move_views.xml',
         'views/purchase_views.xml',
         'views/res_config_settings_views.xml',
+        'views/crm_lead_views.xml',
         
         # Views - Payroll & HR
         'views/hr_employee_views.xml',

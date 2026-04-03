@@ -3,6 +3,7 @@ from . import sale_order
 from . import project_project
 from . import hr_employee
 from . import account_move
+from . import crm_lead_outsource
 from . import hr_payslip
 from . import res_config_settings
 from . import hr_salary_component

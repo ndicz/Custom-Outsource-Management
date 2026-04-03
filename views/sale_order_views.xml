@@ -18,6 +18,22 @@
                         <field name="pph23_rate"    invisible="not pph23_applicable"/>
                         <field name="pph23_amount"  invisible="not pph23_applicable"/>
                     </group>
+                    <group string="Tautan">
+                        <field name="outsource_lead_id" readonly="1"/>
+                        <field name="outsource_project_id" readonly="1"/>
+                    </group>
+                    <group>
+                        <button name="action_create_outsource_project"
+                                type="object"
+                                string="Buat Proyek"
+                                class="btn-primary"
+                                invisible="outsource_project_id != False"/>
+                        <button name="action_create_outsource_project"
+                                type="object"
+                                string="Lihat Proyek"
+                                class="btn-secondary"
+                                invisible="outsource_project_id == False"/>
+                    </group>
                 </page>
             </xpath>
         </field>
